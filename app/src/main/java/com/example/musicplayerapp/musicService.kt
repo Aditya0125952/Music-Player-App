@@ -8,7 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Build
@@ -16,11 +16,12 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import kotlin.properties.Delegates
 
 class musicService : Service(), MediaPlayer.OnCompletionListener{
 
     companion object{
-        fun startService(context: Context) {
+        fun startService(context:Context) {
             val startIntent = Intent(context, musicService::class.java)
             ContextCompat.startForegroundService(context, startIntent)
         }
@@ -29,8 +30,9 @@ class musicService : Service(), MediaPlayer.OnCompletionListener{
             context.stopService(stopIntent)
         }
         var MusicPlayer: MediaPlayer?=null
-
+        var musicIsPlaying= SongPlaying.isplaying
         val notificationChannel ="Music"
+        var position by Delegates.notNull<Int>()
 
 
     }
@@ -82,8 +84,7 @@ class musicService : Service(), MediaPlayer.OnCompletionListener{
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val position=SongPlaying.songPostion
-        val musicIsPlaying= SongPlaying.isplaying
+         position=SongPlaying.songPostion
         val ImageArt= getImageArt(SongPlaying.songsList[position].address)
         val NSongImage=if(ImageArt!=null){
             BitmapFactory.decodeByteArray(ImageArt,0,ImageArt.size)

@@ -63,23 +63,21 @@ class SongPlaying : AppCompatActivity() {
             "Music"->{
                 songsList= ArrayList()
                 songsList.addAll(MainActivity.MusicList_in_MA)
-                imageforsongfunction()
+                imageforsongfunction(this)
                 selectedsong()
                 musicService.startService(this)
 
                 binding.palyPause.setOnClickListener {
-                    playpauseDunction()
-                    musicService.startService(this)
+                    playpauseDunction(this)
                 }
                 binding.next.setOnClickListener {
                     nextsong(this)
-                    imageforsongfunction()
-                    musicService.startService(this)
+                    imageforsongfunction(this)
+
                 }
                 binding.previous.setOnClickListener {
                     previoussong(this)
-                    imageforsongfunction()
-                    musicService.startService(this)
+                    imageforsongfunction(this)
                 }
 
             }
@@ -87,12 +85,7 @@ class SongPlaying : AppCompatActivity() {
 
     }
 
-    fun imageforsongfunction(){
-        Glide.with(this)
-            .load(songsList[songPostion].songimage)
-            .placeholder(R.drawable.india)
-            .into(binding.selectedsongImage)
-    }
+
 
 
 

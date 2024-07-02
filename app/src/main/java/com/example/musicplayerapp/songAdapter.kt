@@ -13,20 +13,20 @@ import com.google.android.material.imageview.ShapeableImageView
 
 @Suppress("DEPRECATION")
 class songAdapter(val context : Activity, val songsList:ArrayList<Music>)
-    : RecyclerView.Adapter<songAdapter.voewHolder>()
+    : RecyclerView.Adapter<songAdapter.viewHolder>()
 {
-    class voewHolder (singleMusic : View): RecyclerView.ViewHolder(singleMusic){
+    class viewHolder (singleMusic : View): RecyclerView.ViewHolder(singleMusic){
         val songNamefromAdapter =singleMusic.findViewById<TextView>(R.id.songName)
         val songImagefromAdapter=singleMusic.findViewById<ShapeableImageView>(R.id.songeImage)
         val songDuration=singleMusic.findViewById<TextView>(R.id.songDuration)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): voewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
         val singleitem= LayoutInflater.from(context).inflate(R.layout.singlesongview,parent,false)
-        return voewHolder(singleitem)
+        return viewHolder(singleitem)
     }
 
-    override fun onBindViewHolder(holder: voewHolder, position: Int) {
+    override fun onBindViewHolder(holder: viewHolder, position: Int) {
         val currentSong =songsList[position]
         holder.songNamefromAdapter.text=currentSong.Sname
         holder.songDuration.text= formateDuration(currentSong.duration)

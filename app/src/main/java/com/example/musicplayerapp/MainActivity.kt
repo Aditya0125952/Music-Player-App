@@ -34,10 +34,21 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         getPermission()
+        fragment()
         myrecycler=findViewById<RecyclerView>(R.id.recyclerView)
         myrecycler.layoutManager= LinearLayoutManager(this)
         MusicList_in_MA=retriveAllSongsFromStorage()
         myrecycler.adapter=songAdapter(this, MusicList_in_MA)
+
+        binding.fragment.setOnClickListener{
+            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun fragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment,MyFragment())
+            .commit()
     }
 
     @SuppressLint("InlinedApi")
@@ -102,5 +113,7 @@ class MainActivity : AppCompatActivity() {
 
         return tempSongList
     }
+
+
 
 }

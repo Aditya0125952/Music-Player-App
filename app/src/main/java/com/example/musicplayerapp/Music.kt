@@ -1,9 +1,18 @@
 package com.example.musicplayerapp
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
+import android.util.Log
+import androidx.core.graphics.drawable.toIcon
 import com.bumptech.glide.Glide
+import com.example.musicplayerapp.MyFragment.Companion
+import com.example.musicplayerapp.SongPlaying.Companion.binding
+import com.example.musicplayerapp.SongPlaying.Companion.songPostion
+import com.example.musicplayerapp.SongPlaying.Companion.songsList
+import com.example.musicplayerapp.musicService.Companion.position
 import java.util.concurrent.TimeUnit
 
 data class Music(val id :String,val Sname:String,val songimage : String,val address :String,val artistName:String,val duration: Long)
@@ -26,55 +35,85 @@ fun selectedsong(){
         musicService.MusicPlayer= MediaPlayer()
     }
     musicService.MusicPlayer!!.reset()
-    musicService.MusicPlayer!!.setDataSource(SongPlaying.songsList[SongPlaying.songPostion].address)
+    musicService.MusicPlayer!!.setDataSource(songsList[songPostion].address)
     musicService.MusicPlayer!!.prepare()
     musicService.MusicPlayer!!.start()
-    SongPlaying.binding.Songstart.text= formateDuration(musicService.MusicPlayer!!.currentPosition.toLong())
-    SongPlaying.binding.songending.text= formateDuration(musicService.MusicPlayer!!.duration.toLong())
+    binding.Songstart.text= formateDuration(musicService.MusicPlayer!!.currentPosition.toLong())
+    binding.songending.text= formateDuration(musicService.MusicPlayer!!.duration.toLong())
     SongPlaying.runnableseekbar()
     if(!SongPlaying.isplaying){
         SongPlaying.isplaying =true
-        SongPlaying.binding.palyPause.setIconResource(R.drawable.baseline_pause_24)
+        binding.palyPause.setIconResource(R.drawable.baseline_pause_24)
     }
 }
 
 
 
-fun playpauseDunction(){
-    if(SongPlaying.isplaying){
-        SongPlaying.binding.palyPause.setIconResource(R.drawable.play_icon)
+fun playpauseDunction(context: Context){
+    if(musicService.musicIsPlaying){
+        binding.palyPause.setIconResource(R.drawable.play_icon)
+        MyFragment.binding.fpausplay.setImageResource(R.drawable.fplay)
         SongPlaying.isplaying =false
+        musicService.musicIsPlaying=false
         musicService.MusicPlayer!!.pause()
     }else{
-        SongPlaying.binding.palyPause.setIconResource(R.drawable.baseline_pause_24)
+        binding.palyPause.setIconResource(R.drawable.baseline_pause_24)
+        MyFragment.binding.fpausplay.setImageResource(R.drawable.fpause)
         SongPlaying.isplaying =true
+        musicService.musicIsPlaying=true
         musicService.MusicPlayer!!.start()
     }
 
+    musicService.startService(context)
 }
 
 fun nextsong(context : Context){
-    if(SongPlaying.songsList.size-1== SongPlaying.songPostion){
-        SongPlaying.songPostion =0
+    if(songsList.size-1== songPostion){
+        songPostion =0
     }else{
-        ++SongPlaying.songPostion
+        songPostion++
     }
-    Glide.with(context)
-        .load(SongPlaying.songsList[SongPlaying.songPostion].songimage)
-        .placeholder(R.drawable.india)
-        .into(SongPlaying.binding.selectedsongImage)
+    imageforsongfunction(context)
+    musicService.startService(context)
+    MyFragment.binding.fsngName.text= songsList[songPostion].Sname
+    fragmentplayPauseCheck()
+    fragmentImage()
     selectedsong()
 }
 
 fun previoussong(context: Context){
-    if(SongPlaying.songPostion ==0){
-        SongPlaying.songPostion = SongPlaying.songsList.size-1
+    if(songPostion ==0){
+        songPostion = songsList.size-1
     }else{
-        --SongPlaying.songPostion
+        --songPostion
     }
-    Glide.with(context)
-        .load(SongPlaying.songsList[SongPlaying.songPostion].songimage)
-        .placeholder(R.drawable.india)
-        .into(SongPlaying.binding.selectedsongImage)
+
+    musicService.startService(context)
+    imageforsongfunction(context)
+    MyFragment.binding.fsngName.text= songsList[songPostion].Sname
+    fragmentplayPauseCheck()
+    fragmentImage()
     selectedsong()
 }
+
+fun fragmentplayPauseCheck(){
+    if(musicService.musicIsPlaying==false){
+        MyFragment.binding.fpausplay.setImageResource(R.drawable.fpause)
+        musicService.musicIsPlaying=true
+    }
+}
+
+fun imageforsongfunction(context: Context){
+    Glide.with(context)
+        .load(songsList[songPostion].songimage)
+        .placeholder(R.drawable.india)
+        .into(binding.selectedsongImage)
+}
+
+fun fragmentImage(){
+    Glide.with(MyFragment.binding.root)
+        .load(songsList[songPostion].songimage)
+        .placeholder(R.drawable.india)
+        .into(Companion.binding.fimg)
+}
+

@@ -16,7 +16,7 @@ class broadcasting : BroadcastReceiver() {
             }
 
             "PlayBtn" -> {
-                playpauseDunction()
+                context?.let { playpauseDunction(it) }
                 musicService.startService(context!!)
             }
 
